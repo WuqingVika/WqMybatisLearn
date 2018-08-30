@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--这里的selectEmployee可以写上默认的 不添加任何databaseId的sql-->
+<mapper namespace="com.wq.dao.EmployeeMapper"><!--以前只是一个命名空间可以随便写-->
+    <!--现在呢 写成接口的全类名--><!--这里用的别名，别名在mybatis-config中配置，不区分大小写-->
+    <!--建议使用全类名，因为有时想看里面结构直接ctrl点击就能查看了 起别名没那么方便-->
+    <select id="selectEmployee" resultType="EMployee" >
+        select * from tbl_employee where id = #{id}
+    </select>
+
+    <select id="selectEmployee" resultType="EMployee" databaseId="mysql">
+        select * from tbl_employee where id = #{id}
+    </select>
+
+    <select id="selectEmployee" resultType="EMployee" databaseId="oracle">
+        select  id id,LAST_NAME 	lastName,gender gender,email email  from ywgl.wq_employee_test where id = #{id}
+    </select>
+
+    <!--增加一个员工oracle-->
+    <!--
+        获取非自增主键的值：
+            Oracle不支持自增；Oracle使用序列来模拟自增；
+            每次插入的数据的主键是从序列中拿到的值；如何获取到这个值；
+         -->
+    <!--
+            keyProperty:查出的主键值封装给javaBean的哪个属性
+            order="BEFORE":当前sql在插入sql之前运行
+                   AFTER：当前sql在插入sql之后运行
+            resultType:查出的数据的返回值类型
+
+            BEFORE运行顺序：
+                先运行selectKey查询id的sql；查出id值封装给javaBean的id属性
+                在运行插入的sql；就可以取出id属性对应的值
+            AFTER运行顺序：
+                先运行插入的sql（从序列中取出新值作为id）；
+                再运行selectKey查询id的sql；
+             -->
+
+    <insert id="addEmployee" parameterType="com.wq.bean.Employee" databaseId="oracle" >
+        <!--<selectKey keyProperty="id" order="BEFORE" resultType="Integer">
+            select SEQ_EMPLOYEE_ID.Nextval from dual
+        </selectKey>
+        insert into ywgl.wq_employee_test (id,last_name,gender,email)
+        VALUES
+        (#{id},#{lastName},#{gender},#{email})-->
+        insert into ywgl.wq_employee_test (id,last_name,gender,email)
+        VALUES
+        (SEQ_EMPLOYEE_ID.nextVal,#{lastName},#{gender},#{email})
+        <selectKey keyProperty="id" order="AFTER" resultType="Integer">
+            select SEQ_EMPLOYEE_ID.Currval from dual
+        </selectKey>
+    </insert>
+    <!--增加一个员工mysql-->
+    <!-- parameterType：参数类型，可以省略，
+	获取自增主键的值：
+		mysql支持自增主键，自增主键值的获取，mybatis也是利用statement.getGenreatedKeys()；
+		useGeneratedKeys="true"；使用自增主键获取主键值策略
+		keyProperty；指定对应的主键属性，也就是mybatis获取到主键值以后，将这个值封装给javaBean的哪个属性
+	-->
+    <insert id="addEmployee" parameterType="com.wq.bean.Employee" databaseId="mysql"
+     useGeneratedKeys="true" keyProperty="id">
+
+        insert into tbl_employee (last_name,gender,email)
+        VALUES
+        (#{lastName},#{gender},#{email})
+    </insert>
+    <!--修改一个员工oracle parameterType="com.wq.bean.Employee"可省略-->
+    <update id="updateEmployee"  databaseId="oracle">
+        UPDATE ywgl.wq_employee_test
+        set
+        last_name=#{lastName},gender=#{gender},email=#{email}
+        WHERE
+        id=#{id}
+    </update>
+    <!--修改一个员工mysql parameterType="com.wq.bean.Employee"可省略-->
+    <update id="updateEmployee"  databaseId="mysql" >
+        UPDATE tbl_employee
+        set
+        last_name=#{lastName},gender=#{gender},email=#{email}
+        WHERE
+        id=#{id}
+    </update>
+    <!--删除一个员工oracle-->
+    <delete id="deleteEmployee" databaseId="oracle">
+        DELETE from ywgl.wq_employee_test
+        WHERE
+        id=#{id}
+    </delete>
+
+    <delete id="deleteEmployee" databaseId="mysql">
+        DELETE from tbl_employee
+        WHERE
+        id=#{id}
+    </delete>
+
+
+    <select id="selectEmployeeByIdAndName" resultType="EMployee" databaseId="mysql" >
+        select * from tbl_employee where id = #{param1} and last_name=#{param2}
+    </select>
+
+    <select id="selectEmployeeByMap" resultType="EMployee" databaseId="mysql">
+        select * from tbl_employee where id = #{id} and last_name=#{lastName}
+    </select>
+
+</mapper>
