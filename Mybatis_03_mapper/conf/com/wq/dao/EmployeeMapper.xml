@@ -3,8 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!--这里的selectEmployee可以写上默认的 不添加任何databaseId的sql-->
-<mapper namespace="com.wq.dao.EmployeeMapper"><!--以前只是一个命名空间可以随便写-->
-    <!--现在呢 写成接口的全类名--><!--这里用的别名，别名在mybatis-config中配置，不区分大小写-->
+<mapper namespace="com.wq.dao.EmployeeMapper"><!--以前只是一个命名空间可以随便写--><!--现在呢 写成接口的全类名-->
+
+    <!--这里用的别名，别名在mybatis-config中配置，不区分大小写-->
     <!--建议使用全类名，因为有时想看里面结构直接ctrl点击就能查看了 起别名没那么方便-->
     <select id="selectEmployee" resultType="EMployee" >
         select * from tbl_employee where id = #{id}
@@ -47,7 +48,7 @@
         (#{id},#{lastName},#{gender},#{email})-->
         insert into ywgl.wq_employee_test (id,last_name,gender,email)
         VALUES
-        (SEQ_EMPLOYEE_ID.nextVal,#{lastName},#{gender},#{email})
+        (SEQ_EMPLOYEE_ID.nextVal,#{lastName},#{gender},#{email <!--,jdbcType=NULL-->})
         <selectKey keyProperty="id" order="AFTER" resultType="Integer">
             select SEQ_EMPLOYEE_ID.Currval from dual
         </selectKey>
@@ -100,8 +101,29 @@
         select * from tbl_employee where id = #{param1} and last_name=#{param2}
     </select>
 
+    <!--$主要用于像表名啊 原生的sql拼接 -->
+    <!--#像密码这些，如果打印sql会用问号这样安全-->
     <select id="selectEmployeeByMap" resultType="EMployee" databaseId="mysql">
-        select * from tbl_employee where id = #{id} and last_name=#{lastName}
+        select * from ${tableName} where id = #{id} and last_name=#{lastName}
     </select>
 
+<!--返回集合的时候，resultType是定义集合中元素的类型哦！-->
+    <select id="selectEmployeeByLikeName" resultType="EMployee" databaseId="mysql">
+        select * from tbl_employee where  last_name like #{lastName}
+    </select>
+
+    <!--返回Map<String,Object> resultType指定为java.util.Map,【map,mybatis能识别因为它是一个别名】-->
+    <select id="selectEmployeeReturnMap" resultType="map" databaseId="mysql">
+        select * from tbl_employee where  id=#{id}
+    </select>
+
+    <!--返回Map<String,Object> resultType指定为map,mybatis能识别因为它是一个别名-->
+    <select id="selectEmployeeReturnListMap" resultType="map" databaseId="mysql">
+        select * from tbl_employee where  last_name like #{lastName}
+    </select>
+
+    <!---->
+    <select id="selectEmployeeReturnMapE" resultType="com.wq.bean.Employee" databaseId="mysql">
+        select * from tbl_employee where  last_name like #{lastName}
+    </select>
 </mapper>

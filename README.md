@@ -55,7 +55,23 @@
     - 3.Map ====>直接#{id},#{lastName} 
     - 4.List====>#{list[0]}
     - ...其余略
-                    
+    
+  - 3.3 ‘#’与$的区别
+    - ‘#{}’:是以预编译的形式，将参数设置到sql语句中；PreparedStatement；防止sql注入
+	- ‘${}’:取出的值直接拼装在sql语句中；会有安全问题；
+		大多情况下，我们去参数的值都应该去使用#{}；                    
                      
-
-           	
+  - 3.4 jdbcType=NULL Oracle的相关配置
+    - 在我们数据为null的时候，有些数据库可能不能识别mybatis对null的默认处理。比如Oracle（报错）；
+    	- JdbcType OTHER：无效的类型；因为mybatis对所有的null都映射的是原生Jdbc的OTHER类型，oracle不能正确处理;
+    		- 由于全局配置中：jdbcTypeForNull=OTHER；oracle不支持；两种办法
+    		  - 1、#{email,jdbcType=OTHER};
+    		  - 2、jdbcTypeForNull=NULL  
+    		    ```xml
+    		    <setting name="jdbcTypeForNull" value="NULL"/>
+    		    ```
+  - 3.5 resultType练习
+     - 返回list时，resultType设为定义集合中返回元素的类型;
+     - 返回Map(key是数据库的字段，value是对应的值)时，resultType设为java.util.Map【别名map】,map是mybatis能识别的别名;
+     - 返回Map(指定key,key为JavaBean中的属性名)时，resultType设为JavaBean名称(如:employee);
+     - 返回Map集合时，resultType设为定义集合中Map元素的类型;

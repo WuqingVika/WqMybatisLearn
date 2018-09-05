@@ -31,3 +31,9 @@ CREATE TABLE "tbl_employee" (
 -- Records of tbl_employee
 -- ----------------------------
 INSERT INTO `tbl_employee` VALUES ('1', 'wq', '1', 'wuqing@hh.com');
+
+
+--add dept_id
+alter table tbl_employee add column d_id int(11);
+alter table tbl_employee add CONSTRAINT fk_emp_dept  FOREIGN key (d_id)
+REFERENCES tbl_dept (id)

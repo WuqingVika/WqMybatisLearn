@@ -1,0 +1,4 @@
+create table tbl_dept(
+  id int(10) PRIMARY key auto_increment,
+  dept_name varchar(255)
+)

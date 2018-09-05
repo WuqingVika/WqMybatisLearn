@@ -3,6 +3,7 @@ package com.wq.test;
 import com.wq.bean.Employee;
 import com.wq.dao.EmployeeMapper;
 import com.wq.dao.EmployeeMapperAnnotation;
+import com.wq.dao.EmployeeMapperPlus;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -96,7 +98,7 @@ public class MybatisTest {
         try {
             EmployeeMapperAnnotation mapper = sqlSession.getMapper(EmployeeMapperAnnotation.class);
             //会为接口自动创建一个代理对象,由代理对象来执行增删改操作
-            Employee employee = mapper.selectEmployee(1);
+            Employee employee = mapper.selectEmployee(3);
             System.out.println(employee);
         } finally {
             sqlSession.close();
@@ -112,7 +114,8 @@ public class MybatisTest {
             EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
             //会为接口自动创建一个代理对象,由代理对象来执行增删改操作
             //1-----------------增加
-            Employee employee = new Employee(null, "田喜碧337", "1", "hebe0330@hhh.com");
+            //oracle添加如果为空的 需要全局配置jdbcType=NULL 因为Mybatis默认识别空用JdbcType Other来作为类型，但是呢Oracle不支持Other，所以需要改为NuLL，要么在属性加Null 要么全局加
+            Employee employee = new Employee(null, "田喜碧339", "1", null);
             mapper.addEmployee(employee);
             System.out.println(employee);
 
@@ -141,15 +144,91 @@ public class MybatisTest {
             //1.=============多个参数
             /*Employee employee = mapper.selectEmployeeByIdAndName(2, "杨幂");*/
             //2.=============Map
-            Map<String,Object> map=new HashMap<String,Object>();
-            map.put("id",2);
-            map.put("lastName","杨幂");
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("id", 2);
+            map.put("lastName", "杨幂");
+            map.put("tableName", "tbl_employee");
             Employee employee = mapper.selectEmployeeByMap(map);
             System.out.println(employee);
         } finally {
-            sqlSession.commit();//因为是涉及增删改的 所以要手动提交
             sqlSession.close();
         }
+    }
 
+    @Test//测试返回列表
+    public void testGetEmpList() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+            List<Employee> empList = mapper.selectEmployeeByLikeName("田%");
+            empList.forEach(System.out::println);
+        } finally {
+            sqlSession.close();
+        }
+    }
+    //
+    @Test//测试返回Map
+    public void testEmployeeReturnMap() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+            Map<String, Object> map = mapper.selectEmployeeReturnMap(2);
+            System.out.println(map);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test//测试返回Map集合
+    public void testEmployeeReturnMapList() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+            List<Map<String, Object>> list = mapper.selectEmployeeReturnListMap("%喜碧%");
+            list.forEach(System.out::println);
+        } finally {
+            sqlSession.close();
+        }
+    }
+    @Test//测试返回Map:key是员工ID，value是员工信息
+    public void testEmployeeReturnMap2() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+            Map<Integer, Employee> maps = mapper.selectEmployeeReturnMapE("%喜碧%");
+            System.out.println(maps);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test//测试ResultMap
+    public void testResultMap() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            EmployeeMapperPlus mapper = sqlSession.getMapper(EmployeeMapperPlus.class);
+            Employee employee = mapper.selectEmpById(3);
+            System.out.println(employee);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test//测试ResultMap
+    public void testResultMapPlus() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            EmployeeMapperPlus mapper = sqlSession.getMapper(EmployeeMapperPlus.class);
+            Employee employee = mapper.selectEmpAndDeptById(3);
+            System.out.println(employee);
+        } finally {
+            sqlSession.close();
+        }
     }
 }

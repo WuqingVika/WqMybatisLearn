@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wq.dao.EmployeeMapperPlus">
+    <!--type:可以指定为javaBean的别名，为了以后查看方便就写全类名的形式这样就能按住ctrl直接查看了-->
+    <resultMap id="MySimpleEmp" type="com.wq.bean.Employee">
+        <id column="id" property="id"></id><!--可以直接定义为result,定义id可以帮助底层优化，-->
+        <result column="last_name" property="lastName"></result>
+        <result column="email" property="email"></result>
+        <result column="gender" property="gender"></result>
+    </resultMap>
+    <!--resultType与resultMap只能选择用一个-->
+    <select id="selectEmpById" resultMap="MySimpleEmp">
+        select * from tbl_employee where id = #{id}
+    </select>
+
+    <resultMap id="MyDifEmp" type="com.wq.bean.Employee">
+        <id column="id" property="id"></id>
+        <result column="last_name" property="lastName"></result>
+        <result column="email" property="email"></result>
+        <result column="gender" property="gender"></result>
+        <result column="did" property="dept.id"></result>
+        <result column="dept_name" property="dept.deptName"></result>
+    </resultMap>
+
+    <resultMap id="MyDifEmp2" type="com.wq.bean.Employee">
+        <id column="id" property="id"></id>
+        <result column="last_name" property="lastName"></result>
+        <result column="email" property="email"></result>
+        <result column="gender" property="gender"></result>
+        <association property="dept" javaType="com.wq.bean.Department">
+            <id column="did" property="id"></id>
+            <result column="dept_name" property="deptName"></result>
+        </association>
+    </resultMap>
+
+    <select id="selectEmpAndDeptById" resultMap="MyDifEmp2">
+        select e.id,e.last_name,e.gender,e.email,d.id did,d.dept_name
+        from tbl_employee e,tbl_dept d
+        WHERE e.d_id=d.id and e.id=#{id}
+    </select>
+</mapper>

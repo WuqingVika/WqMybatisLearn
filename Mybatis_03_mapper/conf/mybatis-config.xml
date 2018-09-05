@@ -17,7 +17,8 @@
                 value：设置项取值
          -->
     <settings>
-        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="mapUnderscoreToCamelCase" value="true"/><!--当设置了resultMap添加了字段映射时可以不用配置，但两者不影响，因为这个是全局的配置驼峰转换-->
+        <setting name="jdbcTypeForNull" value="NULL"/>
     </settings>
 
     <!-- 3、typeAliases：别名处理器：可以为我们的java类型起别名
@@ -102,9 +103,7 @@
 						比较重要的，复杂的Dao接口我们来写sql映射文件
 						不重要，简单的Dao接口为了开发快速可以使用注解；
 		-->
-<!--
-        <mapper resource="EmployeeMapper.xml"/>
--->
+         <!-- <mapper resource="EmployeeMapper.xml"/>-->
          <!--<mapper resource="com/wq/dao/EmployeeMapper.xml"/>-->
          <!--<mapper class="com.wq.dao.EmployeeMapperAnnotation"/>-->
 
