@@ -3,6 +3,10 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wq.dao.EmployeeMapperPlus">
+    <!--自定义某个javaBean的封装规则
+	type：自定义规则的Java类型
+	id:唯一id方便引用
+	  -->
     <!--type:可以指定为javaBean的别名，为了以后查看方便就写全类名的形式这样就能按住ctrl直接查看了-->
     <resultMap id="MySimpleEmp" type="com.wq.bean.Employee">
         <id column="id" property="id"></id><!--可以直接定义为result,定义id可以帮助底层优化，-->
@@ -11,10 +15,14 @@
         <result column="gender" property="gender"></result>
     </resultMap>
     <!--resultType与resultMap只能选择用一个-->
-    <select id="selectEmpById" resultMap="MySimpleEmp">
+    <select id="selectEmpById" resultMap="MyEmpDis">
         select * from tbl_employee where id = #{id}
     </select>
 
+    <!--场景一：查询一个员工及其所在部门信息===============================================-->
+    <!--
+		联合查询：级联属性封装结果集
+	  -->
     <resultMap id="MyDifEmp" type="com.wq.bean.Employee">
         <id column="id" property="id"></id>
         <result column="last_name" property="lastName"></result>
@@ -23,12 +31,18 @@
         <result column="did" property="dept.id"></result>
         <result column="dept_name" property="dept.deptName"></result>
     </resultMap>
-
+    <!--
+            使用association定义关联的单个对象的封装规则；
+         -->
     <resultMap id="MyDifEmp2" type="com.wq.bean.Employee">
         <id column="id" property="id"></id>
         <result column="last_name" property="lastName"></result>
         <result column="email" property="email"></result>
         <result column="gender" property="gender"></result>
+        <!--  association可以指定联合的javaBean对象
+		property="dept"：指定哪个属性是联合的对象
+		javaType:指定这个属性对象的类型[不能省略]
+		-->
         <association property="dept" javaType="com.wq.bean.Department">
             <id column="did" property="id"></id>
             <result column="dept_name" property="deptName"></result>
@@ -40,4 +54,62 @@
         from tbl_employee e,tbl_dept d
         WHERE e.d_id=d.id and e.id=#{id}
     </select>
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- 使用association进行分步查询：
+            1、先按照员工id查询员工信息
+            2、根据查询员工信息中的d_id值去部门表查出部门信息
+            3、部门设置到员工中；
+         -->
+    <resultMap id="MyDifEmpStep" type="com.wq.bean.Employee">
+        <id column="id" property="id"></id>
+        <result column="last_name" property="lastName"></result>
+        <result column="email" property="email"></result>
+        <result column="gender" property="gender"></result>
+        <!-- association定义关联对象的封装规则
+	 		select:表明当前属性是调用select指定的方法查出的结果
+	 		column:指定将哪一列的值传给这个方法
+	 		流程：使用select指定的方法（传入column指定的这列参数的值）查出对象，并封装给property指定的属性
+	 	 -->
+        <association property="dept" select="com.wq.dao.DepartmentMapper.getDeptById" column="d_id"></association>
+        <!-- 可以使用延迟加载（懒加载）；(按需加载) 在mybatis-config.xml中开启懒加载！！！
+	 	Employee==>Dept：
+	 		我们每次查询Employee对象的时候，都将一起查询出来。
+	 		部门信息在我们使用的时候再去查询；
+	 		分段查询的基础之上加上两个配置：
+	  -->
+    </resultMap>
+    <select id="selectEmpAndDeptByStep" resultMap="MyDifEmpStep">
+        select *
+        from tbl_employee e
+        WHERE   e.id=#{id}
+    </select>
+
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--根据部门Id返回员工集合-->
+    <select id="getEmpsByDeptId" resultType="com.wq.bean.Employee">
+        select e.* from tbl_employee e where d_id=#{deptId}
+    </select>
+    
+    <!--================================================鉴别器使用-->
+    <resultMap id="MyEmpDis" type="com.wq.bean.Employee">
+        <id column="id" property="id"></id>
+        <result column="last_name" property="lastName"></result>
+        <result column="email" property="email"></result>
+        <result column="gender" property="gender"></result>
+        <discriminator javaType="string" column="gender">
+            <!--case中resultType必填-->
+            <!--1女生 查询出其所在部门的员工列表-->
+            <case value="1" resultType="com.wq.bean.Employee">
+                <association property="dept" select="com.wq.dao.DepartmentMapper.getDeptById" column="d_id"></association>
+            </case>
+            <!--2男生-->
+            <case value="2"  resultType="com.wq.bean.Employee">
+                <id column="id" property="id"></id>
+                <result column="last_name" property="lastName"></result>
+                <result column="last_name" property="email"></result>
+                <result column="gender" property="gender"></result>
+            </case>
+        </discriminator>
+    </resultMap>
+
 </mapper>

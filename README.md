@@ -75,3 +75,35 @@
      - 返回Map(key是数据库的字段，value是对应的值)时，resultType设为java.util.Map【别名map】,map是mybatis能识别的别名;
      - 返回Map(指定key,key为JavaBean中的属性名)时，resultType设为JavaBean名称(如:employee);
      - 返回Map集合时，resultType设为定义集合中Map元素的类型;
+  - 3.6 resultMap练习【详见EmployeeMapperPlus】
+      - 它与resultType只能二选一;
+      - 级联属性封装结果集;
+      - 使用association定义关联的单个对象的封装规则；
+         - property="dept"：指定哪个属性是联合的对象
+         - javaType:指定这个属性对象的类型【不能省略】
+      - 使用association进行分步查询：
+         - select:表明当前属性是调用select指定的方法查出的结果
+         - column:指定将哪一列的值传给这个方法
+         - 流程：使用select指定的方法（传入column指定的这列参数的值）查出对象，并封装给property指定的属性   
+      - 使用延迟加载（懒加载）(按需加载),在mybatis-config.xml中开启懒加载
+           - mybatis-config中配置如下：
+                ```xml
+                <!--懒加载-->
+                <setting name="lazyLoadingEnabled" value="true"/>
+                <!--默认是true 会加载全部属性 如果设为False，只加载想要的属性-->
+                <setting name="aggressiveLazyLoading" value="false"/>
+              ```
+
+  - 3.7 关联集合collection
+     - 不分步：
+        - property：集合名字（如：员工列表属性名称emps，必须和部门Javabean中的员工列表属性名一致）
+        - ofType：集合中元素的类型（如：com.wq.bean.Employee）
+     - 分步：
+        - property：集合名字（如：员工列表属性名称emps，必须和部门Javabean中的员工列表属性名一致）
+        - select：关联的sql查询，（如：com.wq.dao.EmployeeMapperPlus.getEmpsByDeptId） 
+        - column：关联的sql里面需要的入参，比如是部门的id("id")
+           - 如果多个参数时，column="{key1=column1,key2=column2}"
+        - fetchType （即使全局已经配置了懒加载，也可以单独设为eager）
+           - lazy：延迟
+           - eager：立即
+  

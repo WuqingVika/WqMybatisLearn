@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wq.dao.EmployeeMapperDynamicSql">
+    <select id="getEmpsByConditionIf" resultType="com.wq.bean.Employee">
+        select * from tbl_employee
+        /* where 1=1 */
+        <where>
+            <if test="id!=null">
+                and id=#{id}
+            </if>
+            <if test="lastName!=null &amp;&amp; lastName!=&quot;&quot;">
+                and last_name like #{lastName}
+            </if>
+            <if test="gender==0 or gender==1">
+                and gender=#{gender}
+            </if>
+        </where>
+    </select>
+    <select id="getEmpsByConditionTrim" resultType="com.wq.bean.Employee">
+        select * from tbl_employee
+            <trim prefix="where" suffixOverrides="and">
+            <if test="id!=null">
+                 id=#{id} and
+            </if>
+            <if test="lastName!=null &amp;&amp; lastName!=&quot;&quot;">
+                 last_name like #{lastName} and
+            </if>
+            <if test="gender==0 or gender==1">
+                 gender=#{gender} and
+            </if>
+        </trim>
+    </select>
+    <!--带break的 switch-->
+    <select id="getEmpsByConditionChoose" resultType="com.wq.bean.Employee">
+        select * from tbl_employee
+        <where>
+            <choose>
+                <when test="id!=null">
+                    id=#{id}
+                </when>
+                <when test="lastName!=null &amp;&amp; lastName!=&quot;&quot;">
+                    last_name like #{lastName}
+                </when>
+                <otherwise>
+                    gender=1
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <update id="updateEmp">
+         UPDATE tbl_employee
+        <!--<set>
+            <if test="id!=null">
+                id=#{id} ,
+            </if>
+            <if test="lastName!=null &amp;&amp; lastName!=&quot;&quot;">
+                last_name=#{lastName},
+            </if>
+            <if test="gender==0 or gender==1">
+                gender=#{gender} ,
+            </if>
+            <if test="email!=null">
+                email=#{email},
+            </if>
+        </set>-->
+        <trim prefix="set" suffixOverrides=",">
+            <if test="id!=null">
+                id=#{id} ,
+            </if>
+            <if test="lastName!=null &amp;&amp; lastName!=&quot;&quot;">
+                last_name=#{lastName},
+            </if>
+            <if test="gender==0 or gender==1">
+                gender=#{gender} ,
+            </if>
+            <if test="email!=null">
+                email=#{email},
+            </if>
+        </trim>
+        WHERE
+        id=#{id}
+    </update>
+</mapper>

@@ -1,6 +1,8 @@
 package com.wq.test;
 
+import com.wq.bean.Department;
 import com.wq.bean.Employee;
+import com.wq.dao.DepartmentMapper;
 import com.wq.dao.EmployeeMapper;
 import com.wq.dao.EmployeeMapperAnnotation;
 import com.wq.dao.EmployeeMapperPlus;
@@ -212,7 +214,7 @@ public class MybatisTest {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         try {
             EmployeeMapperPlus mapper = sqlSession.getMapper(EmployeeMapperPlus.class);
-            Employee employee = mapper.selectEmpById(3);
+            Employee employee = mapper.selectEmpById(6);
             System.out.println(employee);
         } finally {
             sqlSession.close();
@@ -227,6 +229,50 @@ public class MybatisTest {
             EmployeeMapperPlus mapper = sqlSession.getMapper(EmployeeMapperPlus.class);
             Employee employee = mapper.selectEmpAndDeptById(3);
             System.out.println(employee);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test//测试分步查询
+    public void testSearchEmpAndDeptStep() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            EmployeeMapperPlus mapper = sqlSession.getMapper(EmployeeMapperPlus.class);
+            Employee employee = mapper.selectEmpAndDeptByStep(2);
+            System.out.println(employee.getLastName());
+            System.out.println(employee.getDept());//需要部门的时候 才会加载部门信息
+
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    //===================================================================
+    @Test//测试部门查询（里面的员工列表也要显示）
+    public void testGetDeptPlus() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            DepartmentMapper mapper = sqlSession.getMapper(DepartmentMapper.class);
+            Department department = mapper.getDeptByIdPlus(1);
+            System.out.println(department);
+            //System.out.println(department.getDeptName());
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test//测试部门分步懒加载查询
+    public void testGetDeptPlusStep() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            DepartmentMapper mapper = sqlSession.getMapper(DepartmentMapper.class);
+            Department department = mapper.getDeptByIdStep(1);
+            //System.out.println(department);
+            System.out.println(department.getDeptName());
         } finally {
             sqlSession.close();
         }
