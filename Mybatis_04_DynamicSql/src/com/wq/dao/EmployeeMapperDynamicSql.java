@@ -16,4 +16,5 @@ public interface EmployeeMapperDynamicSql {
     public void updateEmp(Employee employee);
     public List<Employee> getEmpsByForeach(@Param("ids") List<Integer> ids);
     public void addEmps(@Param("emps") List<Employee> emps);
+    public List<Employee> getEmpsTestInnerParam(Employee employee);
 }

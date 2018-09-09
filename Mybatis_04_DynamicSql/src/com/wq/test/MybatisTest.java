@@ -92,11 +92,24 @@ public class MybatisTest {
         try {
             EmployeeMapperDynamicSql mapper = sqlSession.getMapper(EmployeeMapperDynamicSql.class);
             List<Employee> emps=new ArrayList<>();
-            emps.add(new Employee(null,"wqq3","1","wq@dd.com",new Department(1)));
-            emps.add(new Employee(null,"wq14","2","wq@ddee.com",new Department(2)));
+            emps.add(new Employee(null,"wqq003","1","wq@dd0.com",new Department(1)));
+            emps.add(new Employee(null,"wq1004","2","wq@ddee0.com",new Department(2)));
              mapper.addEmps(emps);
         } finally {
             sqlSession.commit();
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testInnerParam() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            EmployeeMapperDynamicSql mapper = sqlSession.getMapper(EmployeeMapperDynamicSql.class);
+            List<Employee> emps = mapper.getEmpsTestInnerParam(new Employee(null, "%wq%", null, null, null));
+            emps.forEach(System.out::println);
+        } finally {
             sqlSession.close();
         }
     }

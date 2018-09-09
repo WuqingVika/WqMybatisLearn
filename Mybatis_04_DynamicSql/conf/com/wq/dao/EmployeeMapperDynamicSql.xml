@@ -106,12 +106,31 @@
 
     <!--oracle批量插入可以用 begin end，也可以用如下这种-->
     <insert id="addEmps" databaseId="oracle">
-        insert into ywgl.wq_employee_test
+        <!--insert into ywgl.wq_employee_test
         (select SEQ_EMPLOYEE_ID.Nextval, lastName, gender, email
         from (
         <foreach collection="emps" item="emp" separator="union">
             select #{emp.lastName} as lastName, #{emp.gender} as gender,#{emp.email} as email from dual
         </foreach>
-        ))
+        ))-->
+        <foreach collection="emps" item="emp" open="begin" close="end;">
+            insert into ywgl.wq_employee_test
+            VALUES (SEQ_EMPLOYEE_ID.Nextval,#{emp.lastName},#{emp.gender},#{emp.email});
+        </foreach>
     </insert>
+
+    <select id="getEmpsTestInnerParam" resultType="com.wq.bean.Employee">
+        <if test="_databaseId=='mysql'">
+            select * from tbl_employee
+            <if test="_parameter!=null">
+                where last_name like #{_parameter.lastName}
+            </if>
+        </if>
+        <if test="_databaseId=='oracle'">
+            select * from wq_employee_test
+            <if test="_parameter!=null">
+                where last_name like #{_parameter.lastName}
+            </if>
+        </if>
+    </select>
 </mapper>
