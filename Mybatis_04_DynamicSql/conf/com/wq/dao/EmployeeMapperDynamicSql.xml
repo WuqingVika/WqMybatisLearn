@@ -122,16 +122,32 @@
     <select id="getEmpsTestInnerParam" resultType="com.wq.bean.Employee">
         <!--<bind name="_lastName" value="'%'+lastName+'%'"></bind>-->
         <if test="_databaseId=='mysql'">
-            select * from tbl_employee
+            select
+            <include refid="selectSql">
+
+             </include>
+              from tbl_employee
             <if test="_parameter!=null">
                 where last_name like #{lastName}
             </if>
         </if>
         <if test="_databaseId=='oracle'">
-            select * from wq_employee_test
+            select <include refid="selectSql">
+              <property name="myEmail" value="email"></property>
+        </include> from wq_employee_test
             <if test="_parameter!=null">
                 where last_name like #{_parameter.lastName}
             </if>
         </if>
     </select>
+
+
+    <sql id="selectSql">
+        <if test="_databaseId=='oracle'">
+        id,last_name,gender,${myEmail}
+        </if>
+        <if test="_databaseId=='mysql'">
+            id,last_name,gender
+        </if>
+    </sql>
 </mapper>
