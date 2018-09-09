@@ -118,12 +118,13 @@
             VALUES (SEQ_EMPLOYEE_ID.Nextval,#{emp.lastName},#{emp.gender},#{emp.email});
         </foreach>
     </insert>
-
+    <!--#{_lastName}用了bind不灵活 不建议使用-->
     <select id="getEmpsTestInnerParam" resultType="com.wq.bean.Employee">
+        <!--<bind name="_lastName" value="'%'+lastName+'%'"></bind>-->
         <if test="_databaseId=='mysql'">
             select * from tbl_employee
             <if test="_parameter!=null">
-                where last_name like #{_parameter.lastName}
+                where last_name like #{lastName}
             </if>
         </if>
         <if test="_databaseId=='oracle'">
