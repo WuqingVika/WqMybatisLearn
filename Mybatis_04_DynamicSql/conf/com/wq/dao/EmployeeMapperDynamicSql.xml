@@ -83,4 +83,35 @@
         WHERE
         id=#{id}
     </update>
+
+    <select id="getEmpsByForeach" resultType="com.wq.bean.Employee">
+        select * from tbl_employee
+        <foreach collection="ids" item="wqid" open=" where id in (" close=")" separator="," >
+            #{wqid}
+        </foreach>
+    </select>
+
+
+    <insert id="addEmps">
+        <!--insert into tbl_employee (last_name,gender,email,d_id) values
+        <foreach collection="emps" item="emp" separator=",">
+            (#{emp.lastName},#{emp.gender},#{emp.email},#{emp.dept.id})
+        </foreach>-->
+
+        <foreach collection="emps" item="emp" separator=";">
+            insert into tbl_employee (last_name,gender,email,d_id) values
+            (#{emp.lastName},#{emp.gender},#{emp.email},#{emp.dept.id})
+        </foreach>
+    </insert>
+
+    <!--oracle批量插入可以用 begin end，也可以用如下这种-->
+    <insert id="addEmps" databaseId="oracle">
+        insert into ywgl.wq_employee_test
+        (select SEQ_EMPLOYEE_ID.Nextval, lastName, gender, email
+        from (
+        <foreach collection="emps" item="emp" separator="union">
+            select #{emp.lastName} as lastName, #{emp.gender} as gender,#{emp.email} as email from dual
+        </foreach>
+        ))
+    </insert>
 </mapper>

@@ -54,7 +54,7 @@
                         自定义数据源：实现DataSourceFactory接口，type是全类名
              -->
 
-    <environments default="dev_mysql"><!--默认设置为mySql环境 -->
+    <environments default="dev_oracle"><!--默认设置为mySql环境 -->
         <environment id="dev_mysql">
             <transactionManager type="JDBC"></transactionManager>
             <dataSource type="POOLED">

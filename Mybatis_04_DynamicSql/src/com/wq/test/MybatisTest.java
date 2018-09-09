@@ -1,5 +1,6 @@
 package com.wq.test;
 
+import com.wq.bean.Department;
 import com.wq.bean.Employee;
 import com.wq.dao.EmployeeMapperDynamicSql;
 import org.apache.ibatis.io.Resources;
@@ -8,11 +9,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 /**
  * 1、接口式编程
@@ -67,6 +65,36 @@ public class MybatisTest {
             List<Employee> emps = mapper.getEmpsByConditionChoose(emp);
             emps.forEach(System.out::println);
 
+        } finally {
+            sqlSession.commit();
+            sqlSession.close();
+        }
+    }
+    //getEmpsByForeach
+
+    @Test
+    public void testEmpsByForeach() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            EmployeeMapperDynamicSql mapper = sqlSession.getMapper(EmployeeMapperDynamicSql.class);
+            List<Employee> emps = mapper.getEmpsByForeach(Arrays.asList(1, 2, 3, 6));
+            emps.forEach(System.out::println);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testForEachInsert() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        try {
+            EmployeeMapperDynamicSql mapper = sqlSession.getMapper(EmployeeMapperDynamicSql.class);
+            List<Employee> emps=new ArrayList<>();
+            emps.add(new Employee(null,"wqq3","1","wq@dd.com",new Department(1)));
+            emps.add(new Employee(null,"wq14","2","wq@ddee.com",new Department(2)));
+             mapper.addEmps(emps);
         } finally {
             sqlSession.commit();
             sqlSession.close();

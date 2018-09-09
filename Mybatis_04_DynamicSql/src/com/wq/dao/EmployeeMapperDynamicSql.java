@@ -1,6 +1,7 @@
 package com.wq.dao;
 
 import com.wq.bean.Employee;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -13,4 +14,6 @@ public interface EmployeeMapperDynamicSql {
     public List<Employee> getEmpsByConditionTrim(Employee employee);
     public List<Employee> getEmpsByConditionChoose(Employee employee);
     public void updateEmp(Employee employee);
+    public List<Employee> getEmpsByForeach(@Param("ids") List<Integer> ids);
+    public void addEmps(@Param("emps") List<Employee> emps);
 }
