@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--这里的selectEmployee可以写上默认的 不添加任何databaseId的sql-->
+<mapper namespace="com.wq.dao.EmployeeMapper"><!--以前只是一个命名空间可以随便写--><!--现在呢 写成接口的全类名-->
+<cache eviction="FIFO" flushInterval="60000" readOnly="false"></cache><!--允许二级缓存-->
+    <!--
+	eviction:缓存的回收策略：
+		• LRU – 最近最少使用的：移除最长时间不被使用的对象。
+		• FIFO – 先进先出：按对象进入缓存的顺序来移除它们。
+		• SOFT – 软引用：移除基于垃圾回收器状态和软引用规则的对象。
+		• WEAK – 弱引用：更积极地移除基于垃圾收集器状态和弱引用规则的对象。
+		• 默认的是 LRU。
+	flushInterval：缓存刷新间隔
+		缓存多长时间清空一次，默认不清空，设置一个毫秒值
+	readOnly:是否只读：
+		true：只读；mybatis认为所有从缓存中获取数据的操作都是只读操作，不会修改数据。
+				 mybatis为了加快获取速度，直接就会将数据在缓存中的引用交给用户。不安全，速度快
+		false：非只读：mybatis觉得获取的数据可能会被修改。
+				mybatis会利用序列化&反序列的技术克隆一份新的数据给你。安全，速度慢
+	size：缓存存放多少元素；
+	type=""：指定自定义缓存的全类名；
+			实现Cache接口即可；
+	-->
+    <select id="selectEmployee" resultType="EMployee" >
+        select * from tbl_employee where id = #{id}
+    </select>
+
+    <select id="selectEmployee" resultType="EMployee" databaseId="mysql" useCache="true">
+        select * from tbl_employee where id = #{id}
+    </select>
+
+    <select id="selectEmployee" resultType="EMployee" databaseId="oracle" >
+        select  id id,LAST_NAME 	lastName,gender gender,email email  from ywgl.wq_employee_test where id = #{id}
+    </select>
+
+    <!--增加一个员工oracle-->
+    <!--
+        获取非自增主键的值：
+            Oracle不支持自增；Oracle使用序列来模拟自增；
+            每次插入的数据的主键是从序列中拿到的值；如何获取到这个值；
+         -->
+    <!--
+            keyProperty:查出的主键值封装给javaBean的哪个属性
+            order="BEFORE":当前sql在插入sql之前运行
+                   AFTER：当前sql在插入sql之后运行
+            resultType:查出的数据的返回值类型
+
+            BEFORE运行顺序：
+                先运行selectKey查询id的sql；查出id值封装给javaBean的id属性
+                在运行插入的sql；就可以取出id属性对应的值
+            AFTER运行顺序：
+                先运行插入的sql（从序列中取出新值作为id）；
+                再运行selectKey查询id的sql；
+             -->
+
+    <insert id="addEmployee" parameterType="com.wq.bean.Employee" databaseId="oracle" >
+        <!--<selectKey keyProperty="id" order="BEFORE" resultType="Integer">
+            select SEQ_EMPLOYEE_ID.Nextval from dual
+        </selectKey>
+        insert into ywgl.wq_employee_test (id,last_name,gender,email)
+        VALUES
+        (#{id},#{lastName},#{gender},#{email})-->
+        insert into ywgl.wq_employee_test (id,last_name,gender,email)
+        VALUES
+        (SEQ_EMPLOYEE_ID.nextVal,#{lastName},#{gender},#{email <!--,jdbcType=NULL-->})
+        <selectKey keyProperty="id" order="AFTER" resultType="Integer">
+            select SEQ_EMPLOYEE_ID.Currval from dual
+        </selectKey>
+    </insert>
+    <!--增加一个员工mysql-->
+    <!-- parameterType：参数类型，可以省略，
+	获取自增主键的值：
+		mysql支持自增主键，自增主键值的获取，mybatis也是利用statement.getGenreatedKeys()；
+		useGeneratedKeys="true"；使用自增主键获取主键值策略
+		keyProperty；指定对应的主键属性，也就是mybatis获取到主键值以后，将这个值封装给javaBean的哪个属性
+	-->
+    <!--flushCache设为true将会清空一、二级缓存-->
+    <insert id="addEmployee" parameterType="com.wq.bean.Employee" databaseId="mysql"
+     useGeneratedKeys="true" keyProperty="id" flushCache="true">
+
+        insert into tbl_employee (last_name,gender,email)
+        VALUES
+        (#{lastName},#{gender},#{email})
+    </insert>
+    <!--修改一个员工oracle parameterType="com.wq.bean.Employee"可省略-->
+    <update id="updateEmployee"  databaseId="oracle">
+        UPDATE ywgl.wq_employee_test
+        set
+        last_name=#{lastName},gender=#{gender},email=#{email}
+        WHERE
+        id=#{id}
+    </update>
+    <!--修改一个员工mysql parameterType="com.wq.bean.Employee"可省略-->
+    <update id="updateEmployee"  databaseId="mysql" >
+        UPDATE tbl_employee
+        set
+        last_name=#{lastName},gender=#{gender},email=#{email}
+        WHERE
+        id=#{id}
+    </update>
+    <!--删除一个员工oracle-->
+    <delete id="deleteEmployee" databaseId="oracle">
+        DELETE from ywgl.wq_employee_test
+        WHERE
+        id=#{id}
+    </delete>
+
+    <delete id="deleteEmployee" databaseId="mysql">
+        DELETE from tbl_employee
+        WHERE
+        id=#{id}
+    </delete>
+
+
+    <select id="selectEmployeeByIdAndName" resultType="EMployee" databaseId="mysql" >
+        select * from tbl_employee where id = #{param1} and last_name=#{param2}
+    </select>
+
+    <!--$主要用于像表名啊 原生的sql拼接 -->
+    <!--#像密码这些，如果打印sql会用问号这样安全-->
+    <select id="selectEmployeeByMap" resultType="EMployee" databaseId="mysql">
+        select * from ${tableName} where id = #{id} and last_name=#{lastName}
+    </select>
+
+<!--返回集合的时候，resultType是定义集合中元素的类型哦！-->
+    <select id="selectEmployeeByLikeName" resultType="EMployee" databaseId="mysql">
+        select * from tbl_employee where  last_name like #{lastName}
+    </select>
+
+    <!--返回Map<String,Object> resultType指定为java.util.Map,【map,mybatis能识别因为它是一个别名】-->
+    <select id="selectEmployeeReturnMap" resultType="map" databaseId="mysql">
+        select * from tbl_employee where  id=#{id}
+    </select>
+
+    <!--返回Map<String,Object> resultType指定为map,mybatis能识别因为它是一个别名-->
+    <select id="selectEmployeeReturnListMap" resultType="map" databaseId="mysql">
+        select * from tbl_employee where  last_name like #{lastName}
+    </select>
+
+    <!---->
+    <select id="selectEmployeeReturnMapE" resultType="com.wq.bean.Employee" databaseId="mysql">
+        select * from tbl_employee where  last_name like #{lastName}
+    </select>
+</mapper>

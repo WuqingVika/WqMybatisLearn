@@ -19,6 +19,7 @@
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true"/><!--当设置了resultMap添加了字段映射时可以不用配置，但两者不影响，因为这个是全局的配置驼峰转换-->
         <setting name="jdbcTypeForNull" value="NULL"/>
+        <setting name="cacheEnabled" value="true"/><!--开启全局使用二级缓存-->
         <setting name="lazyLoadingEnabled" value="true"/><!--懒加载-->
         <setting name="aggressiveLazyLoading" value="false"/><!--默认是true 会加载全部属性 如果设为False，只加载想要的属性-->
     </settings>
