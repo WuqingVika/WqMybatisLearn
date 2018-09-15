@@ -4,7 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!--这里的selectEmployee可以写上默认的 不添加任何databaseId的sql-->
 <mapper namespace="com.wq.dao.EmployeeMapper"><!--以前只是一个命名空间可以随便写--><!--现在呢 写成接口的全类名-->
-<cache eviction="FIFO" flushInterval="60000" readOnly="false"></cache><!--允许二级缓存-->
+<!--
+<cache eviction="FIFO" flushInterval="60000" readOnly="false"></cache>&lt;!&ndash;允许二级缓存&ndash;&gt;
+-->
+    <!--使用ehcache-->
+    <cache type="org.mybatis.caches.ehcache.EhcacheCache"></cache>
     <!--
 	eviction:缓存的回收策略：
 		• LRU – 最近最少使用的：移除最长时间不被使用的对象。

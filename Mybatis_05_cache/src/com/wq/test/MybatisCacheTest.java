@@ -129,6 +129,8 @@ public class MybatisCacheTest {
             Employee employee2 = mapper2.selectEmployee(3);
             System.out.println(employee2);
             System.out.println(employee==employee2);
+
+            //如果使用ehcache会多打印一句日志信息 put added 0 on heap
         } finally {
             sqlSession2.commit();
             sqlSession2.close();

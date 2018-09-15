@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--这里的selectEmployee可以写上默认的 不添加任何databaseId的sql-->
+<mapper namespace="com.wq.dao.EmployeeMapper"><!--以前只是一个命名空间可以随便写--><!--现在呢 写成接口的全类名-->
+  <select id="selectEmployee" resultType="com.wq.bean.Employee">
+      SELECT * from tbl_employee where id=#{id}
+  </select>
+    <select id="selectEmps" resultType="com.wq.bean.Employee">
+        SELECT * from tbl_employee
+    </select>
+    <insert id="addEmp">
+        insert into tbl_employee(last_name,gender,email) values(#{lastName},#{gender},#{email})
+    </insert>
+</mapper>

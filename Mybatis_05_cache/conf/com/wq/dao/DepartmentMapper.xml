@@ -3,7 +3,8 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wq.dao.DepartmentMapper">
-    <cache></cache>
+    <!--<cache></cache>--> <!--namespace指定和哪个工作空间配置的一样-->
+    <cache-ref namespace="com.wq.dao.EmployeeMapper"></cache-ref>
     <resultMap id="MyDept" type="com.wq.bean.Department">
         <id column="id" property="id"></id>
         <result column="dept_name" property="deptName"></result>
