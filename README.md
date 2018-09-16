@@ -142,4 +142,34 @@
          - 测试：flushCache="true"：一级缓存就清空了；二级也会被清除；
          - 查询标签：flushCache="false"；如果flushCache=true;每次查询之后都会清空缓存；缓存是没有被使用的；
      - 4）、sqlSession.clearCache();只是清楚当前session的一级缓存；
-     - 5）、localCacheScope：本地缓存作用域：（一级缓存SESSION）；当前会话的所有数据保存在会话缓存中；STATEMENT：可以禁用一级缓存；          
+     - 5）、localCacheScope：本地缓存作用域：（一级缓存SESSION）；当前会话的所有数据保存在会话缓存中；STATEMENT：可以禁用一级缓存；
+               
+- 6.Mybatis_06_ssm(Spring+SpringMVC+Mybatis整合测试)
+  - 6.1 相关配置
+       - 6.1.1 web.xml
+                - 监听Spring、SpringMVC配置
+       - 6.1.2 applicationContext.xml
+                - Spring相关配置：引入数据库配置文件、事务管理、开启基于注解的事务、扫描所有的mapper接口的实现等。
+       - 6.1.3 spring-servlet.xml
+                - SpringMVC相关配置：扫描控制器、视图解析器等
+- 7.Mybatis_07_mbg(Mybati逆向工程)
+- 8.Mybatis_08_source(源码解读，了解Mybatis工作原理)
+  - 工作原理
+    ![图8.1Mybatis工作原理.png](https://upload-images.jianshu.io/upload_images/2836779-4a8a23310a59c38e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+  - 四大对象
+    - Executor
+    - StatementHandler
+    - ParameterHandler
+    - ResultSetHandler
+![图8.2 mybatis-sqlSessionFactory-init时序图.png](https://upload-images.jianshu.io/upload_images/2836779-9eab30c71d74f75e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+                                  
+![图8.3 mybatis-openSession时序图.png](https://upload-images.jianshu.io/upload_images/2836779-a4b5e670f672f83c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![图8.4 Mybatis-getMapper时序图.png](https://upload-images.jianshu.io/upload_images/2836779-0f733a05f3f2ec83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![图8.5 Mybatis-invoke(上）.png](https://upload-images.jianshu.io/upload_images/2836779-9a9a695f87649974.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![图8.6 Mybatis-invoke(下）.png](https://upload-images.jianshu.io/upload_images/2836779-42c931c4f059a285.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+    
+                                  
