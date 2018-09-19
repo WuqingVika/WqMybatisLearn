@@ -25,6 +25,14 @@
     <bean id="dataSourceTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"></property>
     </bean>
+
+    <!--配置一个可以进行批量执行的sqlSession  -->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryBean"></constructor-arg>
+        <constructor-arg name="executorType" value="BATCH"></constructor-arg>
+    </bean>
+
+
     <!--开启基于注解的事务-->
     <!--transaction-manager因为id不是默认的trans...Manager所以要加上-->
     <tx:annotation-driven transaction-manager="dataSourceTransactionManager"></tx:annotation-driven>

@@ -8,8 +8,22 @@ public class Employee {
     private String lastName;//
     private String gender;//
     private String email;//
-
+    private EmpStatus empStatus=EmpStatus.LOGOUT;
     public Employee() {
+    }
+
+    public EmpStatus getEmpStatus() {
+        return empStatus;
+    }
+
+    public void setEmpStatus(EmpStatus empStatus) {
+        this.empStatus = empStatus;
+    }
+
+    public Employee(String lastName, String gender, String email) {
+        this.lastName = lastName;
+        this.gender = gender;
+        this.email = email;
     }
 
     @Override

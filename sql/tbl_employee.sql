@@ -37,3 +37,7 @@ INSERT INTO `tbl_employee` VALUES ('1', 'wq', '1', 'wuqing@hh.com');
 alter table tbl_employee add column d_id int(11);
 alter table tbl_employee add CONSTRAINT fk_emp_dept  FOREIGN key (d_id)
 REFERENCES tbl_dept (id)
+
+
+alter table tbl_employee add column statusEnum varchar (11);
+alter table tbl_employee change  column statusEnum empStatus varchar(11)

@@ -11,4 +11,31 @@
     <select id="selectEmps" resultType="com.wq.bean.Employee">
         select * from tbl_employee
     </select>
+    <select id="selectEmpO" resultType="com.wq.bean.Employee" databaseId="oracle">
+        select * from wq_employee_test
+    </select>
+    <insert id="addEmps" useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_employee (last_name,gender,email,empStatus) values
+            (#{lastName},#{gender},#{email},#{empStatus})
+    </insert>
+    <!-- public void getPageByProcedure();
+        1、使用select标签定义调用存储过程
+        2、statementType="CALLABLE":表示要调用存储过程
+        3、{call procedure_name(params)}
+    -->
+    <select id="getPageByProcedure" statementType="CALLABLE" databaseId="oracle">
+        {call wq_page_test(
+         #{start,mode=IN,jdbcType=INTEGER},
+			#{end,mode=IN,jdbcType=INTEGER},
+			#{count,mode=OUT,jdbcType=INTEGER},
+			#{emps,mode=OUT,jdbcType=CURSOR,javaType=java.sql.ResultSet,resultMap=PageEmp}
+        )}
+    </select>
+
+    <resultMap id="PageEmp" type="com.wq.bean.Employee">
+        <id column="ID" property="id"></id>
+        <result column="LAST_NAME" property="lastName"/>
+        <result column="GENDER" property="gender"/>
+        <result column="EMAIL" property="email"/>
+    </resultMap>
 </mapper>
