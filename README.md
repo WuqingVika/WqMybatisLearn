@@ -171,5 +171,11 @@
 
 ![图8.6 Mybatis-invoke(下）.png](https://upload-images.jianshu.io/upload_images/2836779-42c931c4f059a285.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-    
+## 其他
+![Jar.png](https://upload-images.jianshu.io/upload_images/2836779-46e242b6797c1e3d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![ssm项目jar.png](https://upload-images.jianshu.io/upload_images/2836779-79ddde37dc3de5b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+💙注： 本文长期更新。此笔记纯个人学习记录整理，如有错误之处，欢迎指正！    
                                   
